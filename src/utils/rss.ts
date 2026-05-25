@@ -94,6 +94,12 @@ function splitItems(xml: string): string[] {
 // Title parser
 // ---------------------------------------------------------------------------
 
+function parseSeasonEpisodeFromTitle(title: string): { season: number; episodeNumber: number } {
+  const m = title.match(/^Season\s+(\d+)\s+Episode\s+(\d+)/i);
+  if (m) return { season: parseInt(m[1], 10), episodeNumber: parseInt(m[2], 10) };
+  return { season: 0, episodeNumber: 0 };
+}
+
 function parseTitle(full: string): { guestName: string; guestTitle: string } {
   // Full title example: "Season 5 Episode 5 | Sabine Fell-Douglas – Director of Business Operations"
   const pipeIdx = full.indexOf(' | ');
@@ -158,6 +164,7 @@ export async function getEpisodes(): Promise<Episode[]> {
     const libsynUrl = getText(item, 'link');
 
     const { guestName, guestTitle } = parseTitle(title);
+    const fromTitle = parseSeasonEpisodeFromTitle(title);
 
     // Parse pubDate to ISO string
     let pubDate = '';
@@ -177,8 +184,8 @@ export async function getEpisodes(): Promise<Episode[]> {
       audioUrl,
       artworkUrl,
       duration,
-      season: parseInt(seasonRaw, 10) || 0,
-      episodeNumber: parseInt(episodeRaw, 10) || 0,
+      season: fromTitle.season || parseInt(seasonRaw, 10) || 0,
+      episodeNumber: fromTitle.episodeNumber || parseInt(episodeRaw, 10) || 0,
       pubDate,
       libsynUrl,
     };
