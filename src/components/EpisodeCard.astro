@@ -1,0 +1,214 @@
+---
+import type { Episode } from '../utils/rss';
+
+interface Props {
+  episode: Episode;
+}
+
+const { episode } = Astro.props;
+
+function formatDate(isoString: string): string {
+  try {
+    return new Intl.DateTimeFormat('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }).format(new Date(isoString));
+  } catch {
+    return isoString;
+  }
+}
+
+const formattedDate = formatDate(episode.pubDate);
+const snippet = episode.description.slice(0, 180).trimEnd();
+const hasMore = episode.description.length > 180;
+---
+
+<a href={`/episodes/${episode.slug}`} class="episode-card" aria-label={`Listen to episode: ${episode.guestName || episode.title}`}>
+  <div class="card-artwork">
+    <img
+      src={episode.artworkUrl}
+      alt={`Artwork for episode with ${episode.guestName || 'guest'}`}
+      loading="lazy"
+      decoding="async"
+      width="400"
+      height="400"
+    />
+  </div>
+
+  <div class="card-body">
+    <div class="card-meta">
+      <span class="badge badge--season">S{episode.season} E{episode.episodeNumber}</span>
+      <span class="card-date">{formattedDate}</span>
+    </div>
+
+    {episode.guestName && (
+      <h3 class="card-guest">{episode.guestName}</h3>
+    )}
+
+    {episode.guestTitle && (
+      <p class="card-job">{episode.guestTitle}</p>
+    )}
+
+    {!episode.guestName && (
+      <h3 class="card-guest">{episode.title}</h3>
+    )}
+
+    <p class="card-description">
+      {snippet}{hasMore ? '…' : ''}
+    </p>
+
+    <div class="card-footer">
+      <span class="badge badge--duration">
+        <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12" aria-hidden="true">
+          <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 1.5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11zM7.25 4v4.31l2.97 1.72-.75 1.3L6 9.5V4h1.25z"/>
+        </svg>
+        {episode.duration}
+      </span>
+      <span class="card-cta">Listen &rarr;</span>
+    </div>
+  </div>
+</a>
+
+<style>
+  .episode-card {
+    display: flex;
+    flex-direction: column;
+    background: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+    height: 100%;
+  }
+
+  .episode-card:hover {
+    transform: translateY(-2px);
+    border-color: #00d4c8;
+    box-shadow: 0 8px 32px rgba(0, 212, 200, 0.12);
+    opacity: 1;
+  }
+
+  /* Artwork */
+  .card-artwork {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #111111;
+  }
+
+  .card-artwork img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 400ms ease;
+  }
+
+  .episode-card:hover .card-artwork img {
+    transform: scale(1.03);
+  }
+
+  /* Body */
+  .card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  /* Meta row */
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 0.2em 0.55em;
+    line-height: 1.4;
+  }
+
+  .badge--season {
+    background: rgba(0, 212, 200, 0.15);
+    color: #00d4c8;
+    border: 1px solid rgba(0, 212, 200, 0.25);
+  }
+
+  .badge--duration {
+    background: rgba(255, 255, 255, 0.06);
+    color: #888888;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .card-date {
+    font-size: 0.75rem;
+    color: #888888;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Guest name */
+  .card-guest {
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    color: #ffffff;
+    line-height: 1.25;
+    margin-top: 0.25rem;
+  }
+
+  /* Job title */
+  .card-job {
+    font-size: 0.875rem;
+    color: #888888;
+    line-height: 1.4;
+    font-style: italic;
+  }
+
+  /* Description snippet */
+  .card-description {
+    font-size: 0.875rem;
+    color: #aaaaaa;
+    line-height: 1.6;
+    /* Clamp to ~3 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  /* Footer row */
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .card-cta {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #00d4c8;
+    transition: opacity 150ms ease;
+  }
+
+  .episode-card:hover .card-cta {
+    opacity: 0.8;
+  }
+</style>

@@ -1,0 +1,280 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EpisodeCard from '../../components/EpisodeCard.astro';
+import { getEpisodes } from '../../utils/rss';
+
+const episodes = await getEpisodes();
+
+// Group episodes by season, descending season order
+const seasonMap = new Map<number, typeof episodes>();
+for (const ep of episodes) {
+  const s = ep.season || 0;
+  if (!seasonMap.has(s)) seasonMap.set(s, []);
+  seasonMap.get(s)!.push(ep);
+}
+
+// Seasons sorted descending (most recent first)
+const seasons = [...seasonMap.keys()].sort((a, b) => b - a);
+
+const totalEpisodes = episodes.length;
+---
+
+<BaseLayout
+  title="All Episodes — NorthWestify"
+  description={`Browse all ${totalEpisodes} episodes of NorthWestify. Conversations with founders, engineers, and leaders from across the North West of England.`}
+>
+
+  <!-- ===================== PAGE HERO ===================== -->
+  <section class="page-hero" aria-label="Page header">
+    <div class="container">
+      <h1 class="page-title">Episodes</h1>
+      <p class="page-subtitle">
+        {totalEpisodes} conversations with founders, engineers, and leaders from across the North West.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== FILTER CHIPS ===================== -->
+  <div class="filter-bar" role="group" aria-label="Filter episodes by season">
+    <div class="container filter-inner">
+      <button
+        class="filter-chip filter-chip--active"
+        data-filter="all"
+        aria-pressed="true"
+        type="button"
+      >
+        All
+      </button>
+      {seasons.map((s) => (
+        <button
+          class="filter-chip"
+          data-filter={String(s)}
+          aria-pressed="false"
+          type="button"
+        >
+          Season {s}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <!-- ===================== EPISODE GROUPS ===================== -->
+  <main class="episodes-main" id="episodes-list">
+    <div class="container">
+      {seasons.map((s) => {
+        const group = seasonMap.get(s)!;
+        return (
+          <section
+            class="season-group"
+            data-season={String(s)}
+            aria-labelledby={`season-${s}-heading`}
+          >
+            <div class="season-header">
+              <h2 class="season-heading" id={`season-${s}-heading`}>
+                Season {s}
+              </h2>
+              <span class="season-count">{group.length} episode{group.length !== 1 ? 's' : ''}</span>
+            </div>
+
+            <div class="episodes-grid">
+              {group.map((ep) => (
+                <div class="grid-item" data-season={String(s)}>
+                  <EpisodeCard episode={ep} />
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  </main>
+
+</BaseLayout>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('.filter-chip');
+  const groups = document.querySelectorAll<HTMLElement>('.season-group');
+
+  function applyFilter(filter: string) {
+    chips.forEach((chip) => {
+      const isActive = chip.dataset.filter === filter;
+      chip.classList.toggle('filter-chip--active', isActive);
+      chip.setAttribute('aria-pressed', String(isActive));
+    });
+
+    if (filter === 'all') {
+      groups.forEach((g) => {
+        g.style.display = '';
+      });
+    } else {
+      groups.forEach((g) => {
+        const visible = g.dataset.season === filter;
+        g.style.display = visible ? '' : 'none';
+      });
+    }
+  }
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      applyFilter(chip.dataset.filter ?? 'all');
+    });
+  });
+</script>
+
+<style>
+  /* ============================================================
+     PAGE HERO
+  ============================================================ */
+  .page-hero {
+    background: #0d0d0d;
+    padding-top: clamp(3rem, 6vw, 5rem);
+    padding-bottom: clamp(2rem, 4vw, 3.5rem);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .page-title {
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    color: #ffffff;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+  }
+
+  .page-subtitle {
+    font-size: clamp(1rem, 2vw, 1.1875rem);
+    color: #888888;
+    max-width: 560px;
+    line-height: 1.65;
+  }
+
+  /* ============================================================
+     FILTER BAR
+  ============================================================ */
+  .filter-bar {
+    position: sticky;
+    top: 64px; /* height of site header */
+    z-index: 50;
+    background: rgba(13, 13, 13, 0.96);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    padding-block: 0.875rem;
+  }
+
+  .filter-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-chip {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: 0.03em;
+    padding: 0.4em 1em;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    color: #aaaaaa;
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+    white-space: nowrap;
+  }
+
+  .filter-chip:hover {
+    border-color: rgba(0, 212, 200, 0.5);
+    color: #00d4c8;
+    background: rgba(0, 212, 200, 0.06);
+  }
+
+  .filter-chip--active {
+    background: #00d4c8;
+    border-color: #00d4c8;
+    color: #0d0d0d;
+  }
+
+  .filter-chip--active:hover {
+    background: #00ece4;
+    border-color: #00ece4;
+    color: #0d0d0d;
+  }
+
+  /* ============================================================
+     EPISODES MAIN CONTENT
+  ============================================================ */
+  .episodes-main {
+    padding-block: clamp(3rem, 6vw, 5rem);
+    background: #0d0d0d;
+    min-height: 60vh;
+  }
+
+  /* ============================================================
+     SEASON GROUP
+  ============================================================ */
+  .season-group {
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .season-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .season-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .season-heading {
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.375rem, 3vw, 2rem);
+    color: #ffffff;
+    line-height: 1.15;
+  }
+
+  .season-count {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.8125rem;
+    color: #555555;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  /* ============================================================
+     EPISODE GRID
+  ============================================================ */
+  .episodes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .grid-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 1024px) {
+    .episodes-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .episodes-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .filter-chip {
+      font-size: 0.75rem;
+      padding: 0.35em 0.85em;
+    }
+  }
+</style>

@@ -1,0 +1,22 @@
+# Build output — deployed to gh-pages branch by GitHub Actions, not committed to main
+dist/
+
+# Dependencies
+node_modules/
+
+# Astro generated types — recreated on dev/build
+.astro/
+
+# Local Claude Code settings
+.claude/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Environment files — if you ever add local secrets
+.env
+.env.local

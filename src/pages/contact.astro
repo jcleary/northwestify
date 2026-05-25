@@ -1,0 +1,332 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const sent = Astro.url.searchParams.get('sent') === '1';
+---
+
+<BaseLayout
+  title="Get in Touch — NorthWestify"
+  description="Have a question for the hosts or a guest suggestion? Drop us a message and we'll get back to you."
+>
+  <main class="contact-page">
+
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="container">
+        <h1 class="hero-heading">Ask a Question</h1>
+        <p class="hero-intro">
+          Have a question for the hosts? Know someone who should be on the show?
+          Drop us a message.
+        </p>
+      </div>
+    </section>
+
+    <!-- Form section -->
+    <section class="form-section">
+      <div class="container">
+        <div class="form-wrapper">
+
+          {sent ? (
+            <div class="success-message" role="alert">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+              <div>
+                <strong>Message sent!</strong>
+                <p>Thanks for getting in touch — we'll get back to you soon.</p>
+              </div>
+            </div>
+          ) : (
+            <form
+              action="https://formspree.io/f/FORMSPREE_ID"
+              method="POST"
+              class="contact-form"
+              novalidate
+            >
+              <input type="hidden" name="_subject" value="New NorthWestify enquiry" />
+              <input type="hidden" name="_next" value="/contact?sent=1" />
+
+              <div class="field">
+                <label for="name" class="field-label">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  class="field-input"
+                  placeholder="Your name"
+                  required
+                  autocomplete="name"
+                />
+              </div>
+
+              <div class="field">
+                <label for="email" class="field-label">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="field-input"
+                  placeholder="you@example.com"
+                  required
+                  autocomplete="email"
+                />
+              </div>
+
+              <div class="field">
+                <label for="message" class="field-label">Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  class="field-input field-textarea"
+                  placeholder="What's on your mind?"
+                  rows={5}
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" class="submit-btn">
+                Send Message
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+              </button>
+            </form>
+          )}
+        </div>
+
+        <!-- Secondary CTAs -->
+        <div class="listen-links">
+          <p class="listen-label">Listen now on</p>
+          <div class="listen-btns">
+            <a
+              href="#"
+              class="listen-btn"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Listen on Apple Podcasts"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm2.093 17.206c-.39.23-.857.107-1.086-.282l-1.007-1.705-1.007 1.705c-.229.389-.696.512-1.086.282-.39-.23-.512-.696-.282-1.086l1.292-2.188-1.292-2.187a.795.795 0 0 1 1.369-.806l1.007 1.704 1.007-1.704a.795.795 0 1 1 1.369.806l-1.292 2.187 1.292 2.188c.229.39.107.856-.284 1.086zM7.5 9.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm9 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+              </svg>
+              Apple Podcasts
+            </a>
+            <a
+              href="#"
+              class="listen-btn"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Listen on Spotify"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.494 17.318a.748.748 0 0 1-1.029.249c-2.818-1.723-6.365-2.112-10.541-1.157a.748.748 0 1 1-.334-1.459c4.571-1.045 8.492-.596 11.655 1.338a.748.748 0 0 1 .249 1.029zm1.466-3.261a.937.937 0 0 1-1.287.308c-3.226-1.983-8.142-2.558-11.954-1.4a.937.937 0 1 1-.544-1.79c4.358-1.324 9.776-.682 13.477 1.595a.936.936 0 0 1 .308 1.287zm.126-3.396c-3.868-2.297-10.246-2.509-13.942-1.388a1.123 1.123 0 1 1-.652-2.148c4.243-1.288 11.294-1.039 15.746 1.606a1.124 1.124 0 0 1-1.152 1.93z"/>
+              </svg>
+              Spotify
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</BaseLayout>
+
+<style>
+  .contact-page {
+    padding-bottom: 5rem;
+  }
+
+  .container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  /* Hero */
+  .page-hero {
+    padding: 4rem 0 3rem;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 3.5rem;
+  }
+
+  .hero-heading {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    color: var(--color-text);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .hero-intro {
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    max-width: 500px;
+    line-height: 1.6;
+  }
+
+  /* Form wrapper */
+  .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .form-wrapper {
+    max-width: 560px;
+  }
+
+  /* Success message */
+  .success-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: rgba(0, 212, 200, 0.08);
+    border: 1px solid rgba(0, 212, 200, 0.3);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.5rem;
+    color: var(--color-accent);
+  }
+
+  .success-message svg {
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .success-message strong {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .success-message p {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* Form */
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .field-label {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .field-input {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    width: 100%;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    outline: none;
+    resize: none;
+  }
+
+  .field-input::placeholder {
+    color: #555;
+  }
+
+  .field-input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(0, 212, 200, 0.12);
+  }
+
+  .field-textarea {
+    resize: vertical;
+    min-height: 130px;
+  }
+
+  /* Submit button */
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--color-accent);
+    color: #0d0d0d;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.875rem 1.75rem;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .submit-btn:hover {
+    background: #00bfb5;
+    transform: translateY(-1px);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+
+  .submit-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  /* Listen links */
+  .listen-links {
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    max-width: 560px;
+  }
+
+  .listen-label {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.875rem;
+  }
+
+  .listen-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .listen-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.625rem 1.125rem;
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
+  }
+
+  .listen-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: rgba(0, 212, 200, 0.06);
+  }
+</style>

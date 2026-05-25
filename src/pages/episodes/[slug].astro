@@ -1,0 +1,292 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AudioPlayer from '../../components/AudioPlayer.astro';
+import { getEpisodes } from '../../utils/rss';
+import type { Episode } from '../../utils/rss';
+
+export async function getStaticPaths() {
+  const episodes = await getEpisodes();
+  return episodes.map((ep) => ({
+    params: { slug: ep.slug },
+    props: { episode: ep },
+  }));
+}
+
+interface Props {
+  episode: Episode;
+}
+
+const { episode } = Astro.props;
+
+const pubDateFormatted = episode.pubDate
+  ? new Date(episode.pubDate).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+  : '';
+---
+
+<BaseLayout
+  title={`${episode.guestName} — NorthWestify`}
+  description={episode.description}
+  image={episode.artworkUrl}
+>
+  <main class="episode-detail">
+    <div class="container">
+
+      <a href="/episodes" class="back-link">&#8592; All Episodes</a>
+
+      <div class="episode-header">
+        <span class="season-badge">
+          S{episode.season}&nbsp;E{episode.episodeNumber}
+        </span>
+        <h1 class="guest-name">{episode.guestName}</h1>
+        {episode.guestTitle && (
+          <p class="guest-title">{episode.guestTitle}</p>
+        )}
+      </div>
+
+      <div class="episode-body">
+        <!-- Left: artwork -->
+        <div class="artwork-col">
+          <img
+            src={episode.artworkUrl}
+            alt={`Episode artwork for ${episode.guestName}`}
+            class="episode-artwork"
+            loading="lazy"
+            width="480"
+            height="480"
+          />
+        </div>
+
+        <!-- Right: content -->
+        <div class="content-col">
+          <div class="meta-row">
+            {pubDateFormatted && (
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15" aria-hidden="true">
+                  <path d="M19 4h-1V2h-2v2H8V2H6v2H5C3.9 4 3 4.9 3 6v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM5 7V6h14v1H5zm2 4h10v2H7zm0 4h7v2H7z"/>
+                </svg>
+                {pubDateFormatted}
+              </span>
+            )}
+            {episode.duration && (
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15" aria-hidden="true">
+                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+                </svg>
+                {episode.duration}
+              </span>
+            )}
+          </div>
+
+          <p class="episode-description">{episode.description}</p>
+
+          <div class="player-wrapper">
+            <AudioPlayer audioUrl={episode.audioUrl} title={episode.title} />
+          </div>
+
+          <div class="external-links">
+            <a
+              href={episode.libsynUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="ext-link ext-link--spotify"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.494 17.318a.748.748 0 0 1-1.029.249c-2.818-1.723-6.365-2.112-10.541-1.157a.748.748 0 1 1-.334-1.459c4.571-1.045 8.492-.596 11.655 1.338a.748.748 0 0 1 .249 1.029zm1.466-3.261a.937.937 0 0 1-1.287.308c-3.226-1.983-8.142-2.558-11.954-1.4a.937.937 0 1 1-.544-1.79c4.358-1.324 9.776-.682 13.477 1.595a.936.936 0 0 1 .308 1.287zm.126-3.396c-3.868-2.297-10.246-2.509-13.942-1.388a1.123 1.123 0 1 1-.652-2.148c4.243-1.288 11.294-1.039 15.746 1.606a1.124 1.124 0 0 1-1.152 1.93z"/>
+              </svg>
+              Listen on Spotify
+            </a>
+            <a
+              href={episode.libsynUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="ext-link ext-link--apple"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm2.093 17.206c-.39.23-.857.107-1.086-.282l-1.007-1.705-1.007 1.705c-.229.389-.696.512-1.086.282-.39-.23-.512-.696-.282-1.086l1.292-2.188-1.292-2.187a.795.795 0 0 1 1.369-.806l1.007 1.704 1.007-1.704a.795.795 0 1 1 1.369.806l-1.292 2.187 1.292 2.188c.229.39.107.856-.284 1.086zM7.5 9.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm9 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+              </svg>
+              Listen on Apple Podcasts
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .episode-detail {
+    padding: 3rem 0 5rem;
+    min-height: 80vh;
+  }
+
+  .container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  /* Back link */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+    transition: color var(--transition-fast);
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  /* Episode header */
+  .episode-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .season-badge {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    background: rgba(0, 212, 200, 0.1);
+    border: 1px solid rgba(0, 212, 200, 0.25);
+    border-radius: var(--radius-sm);
+    padding: 0.25rem 0.625rem;
+    margin-bottom: 1rem;
+  }
+
+  .guest-name {
+    font-family: var(--font-heading);
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    font-weight: 800;
+    color: var(--color-text);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+
+  .guest-title {
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+
+  /* Two-column layout */
+  .episode-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.5rem;
+    align-items: start;
+  }
+
+  /* Artwork */
+  .artwork-col {
+    position: sticky;
+    top: 2rem;
+  }
+
+  .episode-artwork {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Content column */
+  .content-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+
+  .meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .meta-item svg {
+    flex-shrink: 0;
+    color: var(--color-accent);
+  }
+
+  .episode-description {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-text);
+    white-space: pre-line;
+  }
+
+  .player-wrapper {
+    width: 100%;
+  }
+
+  /* External links */
+  .external-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+  }
+
+  .ext-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    padding: 0.625rem 1.125rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .ext-link:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: rgba(0, 212, 200, 0.06);
+  }
+
+  /* Mobile: single column */
+  @media (max-width: 768px) {
+    .episode-body {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .artwork-col {
+      position: static;
+    }
+
+    .episode-artwork {
+      max-width: 320px;
+      margin: 0 auto;
+    }
+  }
+</style>
