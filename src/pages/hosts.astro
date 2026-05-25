@@ -4,7 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const hosts = [
   {
     initials: 'JC',
-    image: null,
+    image: '/john-cleary.png',
     name: 'John Cleary',
     role: 'Director, Software Development at 360Insights',
     bio: 'John is a software engineering leader and tech community enthusiast based in the North West. When he\'s not building distributed systems, he\'s exploring the startup and innovation scene across Manchester and beyond.',
@@ -180,7 +180,13 @@ const hosts = [
     justify-content: center;
     flex-shrink: 0;
     overflow: hidden;
+    transition: transform 200ms ease;
   }
+
+  .host-card:first-child .host-avatar { transform: rotate(-5deg); }
+  .host-card:last-child  .host-avatar { transform: rotate(4deg); }
+
+  .host-card:hover .host-avatar { transform: rotate(0deg) scale(1.05); }
 
   .host-avatar img {
     width: 100%;
