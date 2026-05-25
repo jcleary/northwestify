@@ -179,11 +179,11 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
   .audio-player {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 0.875rem 1.125rem;
+    gap: 12px;
+    background: #FFFBF5;
+    border: 1.5px solid rgba(26, 26, 26, 0.1);
+    border-radius: 16px;
+    padding: 14px 18px;
     width: 100%;
   }
 
@@ -200,34 +200,36 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: #00d4c8;
+    background: #FF6B35;
     border: none;
     cursor: pointer;
-    color: #0d0d0d;
-    transition: background 150ms ease, transform 150ms ease;
+    color: #1A1A1A;
+    box-shadow: 0 4px 0 rgba(255, 107, 53, 0.28);
+    transition: transform 0.15s, box-shadow 0.15s;
   }
 
   .play-btn:hover {
-    background: #00bfb5;
-    transform: scale(1.06);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 rgba(255, 107, 53, 0.32);
   }
 
   .play-btn:active {
-    transform: scale(0.96);
+    transform: translateY(0);
+    box-shadow: 0 2px 0 rgba(255, 107, 53, 0.28);
   }
 
   .play-btn:focus-visible {
-    outline: 2px solid #00d4c8;
+    outline: 2px solid #FF6B35;
     outline-offset: 3px;
   }
 
   /* Time */
   .time-current,
   .time-total {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.8125rem;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.75rem;
     font-variant-numeric: tabular-nums;
-    color: #888888;
+    color: rgba(26, 26, 26, 0.55);
     flex-shrink: 0;
     min-width: 3ch;
     white-space: nowrap;
@@ -238,7 +240,7 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
     position: relative;
     flex: 1;
     height: 4px;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(26, 26, 26, 0.12);
     border-radius: 2px;
     cursor: pointer;
     transition: height 150ms ease;
@@ -255,7 +257,7 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
     top: 0;
     height: 100%;
     width: 0%;
-    background: #00d4c8;
+    background: #FF6B35;
     border-radius: 2px;
     pointer-events: none;
     transition: width 100ms linear;
@@ -269,7 +271,7 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #00d4c8;
+    background: #FF6B35;
     pointer-events: none;
     opacity: 0;
     transition: opacity 150ms ease;
@@ -277,6 +279,11 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
 
   .progress-track:hover .progress-thumb {
     opacity: 1;
+  }
+
+  .progress-track:focus-visible {
+    outline: 2px solid #FF6B35;
+    outline-offset: 3px;
   }
 
   /* Volume */
@@ -290,17 +297,17 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
     background: none;
     border: none;
     cursor: pointer;
-    color: #888888;
+    color: rgba(26, 26, 26, 0.5);
     border-radius: 4px;
     transition: color 150ms ease;
   }
 
   .volume-btn:hover {
-    color: #ffffff;
+    color: #1A1A1A;
   }
 
   .volume-btn:focus-visible {
-    outline: 2px solid #00d4c8;
+    outline: 2px solid #FF6B35;
     outline-offset: 2px;
   }
 

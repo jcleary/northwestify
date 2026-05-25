@@ -1,32 +1,46 @@
-/* ============================================================
-   Google Fonts
-   ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@400;500;600&display=swap');
+/* Fonts loaded via <link> in BaseLayout.astro for better performance */
 
 /* ============================================================
-   CSS Custom Properties
+   CSS Custom Properties — Hot Mic palette
    ============================================================ */
 :root {
-  --color-bg: #0d0d0d;
-  --color-accent: #00d4c8;
-  --color-text: #ffffff;
-  --color-text-secondary: #888888;
-  --color-surface: #1a1a1a;
-  --color-surface-hover: #222222;
-  --color-border: rgba(255, 255, 255, 0.08);
+  /* Brand palette */
+  --nw-cream: #FFE8D6;
+  --nw-cream-2: #FFF4E8;
+  --nw-orange: #FF6B35;
+  --nw-orange-soft: #FF8856;
+  --nw-navy: #004E89;
+  --nw-ink: #1A1A1A;
+  --nw-paper: #FFFBF5;
+  --nw-butter: #FFC93C;
 
-  --font-heading: 'Syne', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  /* Semantic aliases */
+  --color-bg: var(--nw-cream-2);
+  --color-accent: var(--nw-orange);
+  --color-text: var(--nw-ink);
+  --color-text-secondary: rgba(26, 26, 26, 0.55);
+  --color-surface: var(--nw-paper);
+  --color-border: rgba(26, 26, 26, 0.08);
+
+  --font-display: 'Unbounded', system-ui, sans-serif;
+  --font-heading: 'Unbounded', system-ui, sans-serif;
+  --font-body: 'Inter Tight', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
   --container-max: 1200px;
   --container-padding: clamp(1rem, 4vw, 2rem);
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 16px;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
 
   --transition-fast: 150ms ease;
-  --transition-base: 250ms ease;
+  --transition-base: 200ms ease;
+
+  /* Card shadow */
+  --shadow-card: 0 1px 0 rgba(0,0,0,0.03), 0 12px 32px -8px rgba(0,78,137,0.08);
+  --shadow-card-hover: 0 4px 0 rgba(0,0,0,0.04), 0 24px 40px -8px rgba(0,78,137,0.14);
 }
 
 /* ============================================================
@@ -73,8 +87,8 @@ h6 {
    Base Styles
    ============================================================ */
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
+  background-color: var(--nw-cream-2);
+  color: var(--nw-ink);
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: 1.6;
@@ -93,59 +107,37 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  font-weight: 700;
-  line-height: 1.15;
-  color: var(--color-text);
-}
-
-h1 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: var(--nw-ink);
 }
 
-h2 {
-  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
-  font-weight: 700;
-}
-
-h3 {
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-  font-weight: 700;
-}
-
-h4 {
-  font-size: clamp(1rem, 2vw, 1.375rem);
-  font-weight: 700;
-}
-
-h5 {
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-h6 {
-  font-size: 1rem;
-  font-weight: 600;
-}
+h1 { font-size: clamp(2.5rem, 6vw, 5rem); }
+h2 { font-size: clamp(2rem, 4vw, 3.5rem); }
+h3 { font-size: clamp(1.25rem, 2.5vw, 2rem); font-weight: 700; }
+h4 { font-size: clamp(1rem, 2vw, 1.375rem); font-weight: 700; }
+h5 { font-size: 1.125rem; font-weight: 600; }
+h6 { font-size: 1rem; font-weight: 600; }
 
 p {
-  color: var(--color-text);
-  line-height: 1.7;
+  color: var(--nw-ink);
+  line-height: 1.65;
 }
 
 a {
-  color: var(--color-accent);
+  color: var(--nw-orange);
   text-decoration: none;
   transition: opacity var(--transition-fast);
 }
 
 a:hover {
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
 strong,
 b {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* ============================================================
@@ -186,28 +178,28 @@ b {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg);
+  background: var(--nw-cream-2);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333333;
+  background: rgba(26, 26, 26, 0.2);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444444;
+  background: rgba(26, 26, 26, 0.35);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #333333 var(--color-bg);
+  scrollbar-color: rgba(26, 26, 26, 0.2) var(--nw-cream-2);
 }
 
 /* ============================================================
    Focus Styles
    ============================================================ */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--nw-orange);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
@@ -216,6 +208,6 @@ b {
    Selection
    ============================================================ */
 ::selection {
-  background-color: var(--color-accent);
-  color: var(--color-bg);
+  background-color: var(--nw-orange);
+  color: var(--nw-paper);
 }

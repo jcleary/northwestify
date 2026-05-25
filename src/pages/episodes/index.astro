@@ -77,9 +77,9 @@ const totalEpisodes = episodes.length;
             </div>
 
             <div class="episodes-grid">
-              {group.map((ep) => (
+              {group.map((ep, i) => (
                 <div class="grid-item" data-season={String(s)}>
-                  <EpisodeCard episode={ep} />
+                  <EpisodeCard episode={ep} colorIndex={i} />
                 </div>
               ))}
             </div>
@@ -126,26 +126,26 @@ const totalEpisodes = episodes.length;
      PAGE HERO
   ============================================================ */
   .page-hero {
-    background: #0d0d0d;
     padding-top: clamp(3rem, 6vw, 5rem);
-    padding-bottom: clamp(2rem, 4vw, 3.5rem);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: clamp(2rem, 4vw, 3rem);
   }
 
   .page-title {
-    font-family: 'Syne', system-ui, sans-serif;
+    font-family: 'Unbounded', system-ui, sans-serif;
     font-weight: 800;
     font-size: clamp(2.5rem, 7vw, 5rem);
-    color: #ffffff;
-    line-height: 1.05;
+    color: #1A1A1A;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
     margin-bottom: 1rem;
   }
 
   .page-subtitle {
-    font-size: clamp(1rem, 2vw, 1.1875rem);
-    color: #888888;
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    color: rgba(26, 26, 26, 0.6);
     max-width: 560px;
     line-height: 1.65;
+    font-family: 'Inter Tight', system-ui, sans-serif;
   }
 
   /* ============================================================
@@ -153,61 +153,59 @@ const totalEpisodes = episodes.length;
   ============================================================ */
   .filter-bar {
     position: sticky;
-    top: 64px; /* height of site header */
+    top: 72px;
     z-index: 50;
-    background: rgba(13, 13, 13, 0.96);
+    background: rgba(255, 244, 232, 0.92);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-    padding-block: 0.875rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+    padding-block: 0.75rem;
   }
 
   .filter-inner {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: 8px;
     flex-wrap: wrap;
   }
 
   .filter-chip {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Inter Tight', system-ui, sans-serif;
     font-weight: 600;
     font-size: 0.8125rem;
-    letter-spacing: 0.03em;
-    padding: 0.4em 1em;
+    padding: 6px 14px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1.5px solid rgba(26, 26, 26, 0.15);
     background: transparent;
-    color: #aaaaaa;
+    color: rgba(26, 26, 26, 0.65);
     cursor: pointer;
     transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
     white-space: nowrap;
   }
 
   .filter-chip:hover {
-    border-color: rgba(0, 212, 200, 0.5);
-    color: #00d4c8;
-    background: rgba(0, 212, 200, 0.06);
+    border-color: #FF6B35;
+    color: #FF6B35;
+    background: rgba(255, 107, 53, 0.06);
   }
 
   .filter-chip--active {
-    background: #00d4c8;
-    border-color: #00d4c8;
-    color: #0d0d0d;
+    background: #FF6B35;
+    border-color: #FF6B35;
+    color: #FFF4E8;
   }
 
   .filter-chip--active:hover {
-    background: #00ece4;
-    border-color: #00ece4;
-    color: #0d0d0d;
+    background: #FF8856;
+    border-color: #FF8856;
+    color: #FFF4E8;
   }
 
   /* ============================================================
      EPISODES MAIN CONTENT
   ============================================================ */
   .episodes-main {
-    padding-block: clamp(3rem, 6vw, 5rem);
-    background: #0d0d0d;
+    padding-block: clamp(2.5rem, 5vw, 4rem);
     min-height: 60vh;
   }
 
@@ -226,24 +224,27 @@ const totalEpisodes = episodes.length;
     display: flex;
     align-items: baseline;
     gap: 1rem;
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
   }
 
   .season-heading {
-    font-family: 'Syne', system-ui, sans-serif;
+    font-family: 'Unbounded', system-ui, sans-serif;
     font-weight: 800;
-    font-size: clamp(1.375rem, 3vw, 2rem);
-    color: #ffffff;
-    line-height: 1.15;
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    color: #1A1A1A;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
   }
 
   .season-count {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.8125rem;
-    color: #555555;
-    font-weight: 500;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(26, 26, 26, 0.45);
+    font-weight: 700;
     flex-shrink: 0;
   }
 
@@ -252,8 +253,8 @@ const totalEpisodes = episodes.length;
   ============================================================ */
   .episodes-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
   }
 
   .grid-item {
@@ -261,20 +262,12 @@ const totalEpisodes = episodes.length;
     flex-direction: column;
   }
 
-  @media (max-width: 1024px) {
-    .episodes-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 600px) {
+  @media (max-width: 700px) {
     .episodes-grid {
       grid-template-columns: 1fr;
     }
-
     .filter-chip {
       font-size: 0.75rem;
-      padding: 0.35em 0.85em;
     }
   }
 </style>

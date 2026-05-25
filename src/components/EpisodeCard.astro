@@ -3,9 +3,10 @@ import type { Episode } from '../utils/rss';
 
 interface Props {
   episode: Episode;
+  colorIndex?: number;
 }
 
-const { episode } = Astro.props;
+const { episode, colorIndex = 0 } = Astro.props;
 
 function formatDate(isoString: string): string {
   try {
@@ -20,51 +21,41 @@ function formatDate(isoString: string): string {
 }
 
 const formattedDate = formatDate(episode.pubDate);
-const snippet = episode.description.slice(0, 180).trimEnd();
-const hasMore = episode.description.length > 180;
+const snippet = episode.description.slice(0, 150).trimEnd();
+
+const sidebarColors = [
+  { bg: '#FF6B35', text: '#FFF4E8' }, // 0 — orange
+  { bg: '#004E89', text: '#FFF4E8' }, // 1 — navy
+  { bg: '#FFC93C', text: '#1A1A1A' }, // 2 — butter
+];
+const { bg: sidebarColor, text: sidebarTextColor } = sidebarColors[colorIndex % 3];
 ---
 
-<a href={`/episodes/${episode.slug}`} class="episode-card" aria-label={`Listen to episode: ${episode.guestName || episode.title}`}>
-  <div class="card-artwork">
-    <img
-      src={episode.artworkUrl}
-      alt={`Artwork for episode with ${episode.guestName || 'guest'}`}
-      loading="lazy"
-      decoding="async"
-      width="400"
-      height="400"
-    />
+<a href={`/episodes/${episode.slug}`} class="episode-card" aria-label={`Listen to: ${episode.guestName || episode.title}`}>
+  <!-- Left colored sidebar -->
+  <div class="card-sidebar" style={`background: ${sidebarColor}`}>
+    <span class="card-badge"
+      >S{episode.season}·E{episode.episodeNumber}</span
+    >
+    <div class="card-artwork-wrap">
+      <img src={episode.artworkUrl} alt="" width="120" height="120" loading="lazy" decoding="async" />
+    </div>
+    <span class="card-duration">{episode.duration}</span>
   </div>
 
+  <!-- Right body -->
   <div class="card-body">
-    <div class="card-meta">
-      <span class="badge badge--season">S{episode.season} E{episode.episodeNumber}</span>
-      <span class="card-date">{formattedDate}</span>
+    <div class="card-top">
+      <div class="card-date">{formattedDate}</div>
+      <h3 class="card-title">{episode.guestName || episode.title}</h3>
+      {episode.guestTitle && <div class="card-role">{episode.guestTitle}</div>}
+      <p class="card-snippet">{snippet}{episode.description.length > 150 ? '…' : ''}</p>
     </div>
-
-    {episode.guestName && (
-      <h3 class="card-guest">{episode.guestName}</h3>
-    )}
-
-    {episode.guestTitle && (
-      <p class="card-job">{episode.guestTitle}</p>
-    )}
-
-    {!episode.guestName && (
-      <h3 class="card-guest">{episode.title}</h3>
-    )}
-
-    <p class="card-description">
-      {snippet}{hasMore ? '…' : ''}
-    </p>
-
-    <div class="card-footer">
-      <span class="badge badge--duration">
-        <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12" aria-hidden="true">
-          <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 1.5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11zM7.25 4v4.31l2.97 1.72-.75 1.3L6 9.5V4h1.25z"/>
-        </svg>
-        {episode.duration}
-      </span>
+    <div class="card-bottom">
+      <!-- Decorative waveform bars -->
+      <div class="card-waveform" aria-hidden="true">
+        {Array.from({length: 16}).map(() => <span class="wv-bar" />)}
+      </div>
       <span class="card-cta">Listen &rarr;</span>
     </div>
   </div>
@@ -73,142 +64,187 @@ const hasMore = episode.description.length > 180;
 <style>
   .episode-card {
     display: flex;
-    flex-direction: column;
-    background: #1a1a1a;
-    border-radius: 8px;
+    flex-direction: row;
+    background: #FFFBF5;
+    border-radius: 20px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(26, 26, 26, 0.06);
     text-decoration: none;
-    color: inherit;
-    transition: transform 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+    color: #1A1A1A;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     height: 100%;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03), 0 12px 32px -8px rgba(0, 78, 137, 0.08);
   }
 
   .episode-card:hover {
-    transform: translateY(-2px);
-    border-color: #00d4c8;
-    box-shadow: 0 8px 32px rgba(0, 212, 200, 0.12);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.04), 0 24px 40px -8px rgba(0, 78, 137, 0.14);
     opacity: 1;
   }
 
-  /* Artwork */
-  .card-artwork {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
-    background: #111111;
+  /* Sidebar */
+  .card-sidebar {
+    width: 160px;
+    flex-shrink: 0;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
   }
 
-  .card-artwork img {
+  .card-badge {
+    display: inline-flex;
+    background: rgba(26, 26, 26, 0.8);
+    color: #FFF4E8;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .card-artwork-wrap {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(255, 251, 245, 0.3);
+    border: 4px solid rgba(255, 251, 245, 0.85);
+    margin: 0 auto;
+  }
+
+  .card-artwork-wrap img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 400ms ease;
   }
 
-  .episode-card:hover .card-artwork img {
-    transform: scale(1.03);
+  .card-duration {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(255, 251, 245, 0.85);
+    color: #1A1A1A;
+    border-radius: 999px;
+    padding: 4px 10px;
   }
 
   /* Body */
   .card-body {
-    padding: 1.25rem;
+    flex: 1;
+    padding: 20px 22px 18px;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    flex: 1;
+    justify-content: space-between;
+    min-width: 0;
   }
 
-  /* Meta row */
-  .card-meta {
+  .card-top {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  /* Badges */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3em;
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    border-radius: 4px;
-    padding: 0.2em 0.55em;
-    line-height: 1.4;
-  }
-
-  .badge--season {
-    background: rgba(0, 212, 200, 0.15);
-    color: #00d4c8;
-    border: 1px solid rgba(0, 212, 200, 0.25);
-  }
-
-  .badge--duration {
-    background: rgba(255, 255, 255, 0.06);
-    color: #888888;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    flex-direction: column;
+    gap: 6px;
   }
 
   .card-date {
-    font-size: 0.75rem;
-    color: #888888;
-    font-family: 'Inter', system-ui, sans-serif;
-  }
-
-  /* Guest name */
-  .card-guest {
-    font-family: 'Syne', system-ui, sans-serif;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     font-weight: 700;
-    font-size: 1.0625rem;
-    color: #ffffff;
-    line-height: 1.25;
-    margin-top: 0.25rem;
+    color: rgba(26, 26, 26, 0.45);
+    margin-bottom: 2px;
   }
 
-  /* Job title */
-  .card-job {
-    font-size: 0.875rem;
-    color: #888888;
-    line-height: 1.4;
+  .card-title {
+    font-family: 'Unbounded', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(0.9375rem, 1.8vw, 1.125rem);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: #1A1A1A;
+  }
+
+  .card-role {
+    font-size: 0.8125rem;
+    color: rgba(26, 26, 26, 0.55);
+    font-weight: 500;
     font-style: italic;
   }
 
-  /* Description snippet */
-  .card-description {
-    font-size: 0.875rem;
-    color: #aaaaaa;
-    line-height: 1.6;
-    /* Clamp to ~3 lines */
+  .card-snippet {
+    font-size: 0.8125rem;
+    color: rgba(26, 26, 26, 0.6);
+    line-height: 1.55;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    flex: 1;
   }
 
-  /* Footer row */
-  .card-footer {
+  /* Bottom row */
+  .card-bottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 0.5rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(26, 26, 26, 0.07);
   }
 
+  /* Waveform */
+  .card-waveform {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 22px;
+  }
+
+  .wv-bar {
+    display: block;
+    width: 3px;
+    background: rgba(26, 26, 26, 0.2);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .wv-bar:nth-child(1)  { height: 8px; }
+  .wv-bar:nth-child(2)  { height: 14px; }
+  .wv-bar:nth-child(3)  { height: 6px; }
+  .wv-bar:nth-child(4)  { height: 18px; }
+  .wv-bar:nth-child(5)  { height: 10px; }
+  .wv-bar:nth-child(6)  { height: 16px; }
+  .wv-bar:nth-child(7)  { height: 5px; }
+  .wv-bar:nth-child(8)  { height: 20px; }
+  .wv-bar:nth-child(9)  { height: 12px; }
+  .wv-bar:nth-child(10) { height: 8px; }
+  .wv-bar:nth-child(11) { height: 16px; }
+  .wv-bar:nth-child(12) { height: 10px; }
+  .wv-bar:nth-child(13) { height: 14px; }
+  .wv-bar:nth-child(14) { height: 6px; }
+  .wv-bar:nth-child(15) { height: 18px; }
+  .wv-bar:nth-child(16) { height: 9px; }
+
+  /* CTA */
   .card-cta {
+    font-family: 'Inter Tight', system-ui, sans-serif;
     font-size: 0.8125rem;
-    font-weight: 600;
-    color: #00d4c8;
-    transition: opacity 150ms ease;
+    font-weight: 700;
+    color: #FF6B35;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
-  .episode-card:hover .card-cta {
-    opacity: 0.8;
+  /* Mobile */
+  @media (max-width: 480px) {
+    .card-sidebar {
+      width: 120px;
+    }
+
+    .card-artwork-wrap {
+      width: 88px;
+      height: 88px;
+    }
   }
 </style>
