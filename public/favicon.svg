@@ -1,7 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <!-- Dark background circle -->
-  <circle cx="16" cy="16" r="16" fill="#0d0d0d"/>
-  <!-- Stylized "N" in teal -->
+  <circle cx="16" cy="16" r="16" fill="#ff6b35"/>
   <text
     x="16"
     y="22"
@@ -9,7 +7,7 @@
     font-size="20"
     font-weight="900"
     text-anchor="middle"
-    fill="#00d4c8"
+    fill="#fff4e8"
     letter-spacing="-0.5"
   >N</text>
 </svg>
